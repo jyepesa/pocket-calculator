@@ -6,12 +6,13 @@ const clearBtn = document.getElementById("clear-btn");
 let firstNum;
 let secondNum;
 let opSign;
-let empty = false;
+let empty = true;
+let ongoingOp = false;
 
 function writeNum(num) {
   if (empty) {
-    firstNum = 0;
-    secondNum = 0;
+    firstNum = "";
+    secondNum = "";
     screen.innerText = "";
     calculations.innerText = "";
     empty = false;
@@ -20,26 +21,55 @@ function writeNum(num) {
 }
 
 function operation(value) {
-  if (calculations.innerText !== "") {
+  if (empty) {
+    return;
+  }
+  if (calculations.innerText !== "" && screen.innerText !== "") {
     calculate();
-  } else {
+  } else if (!ongoingOp) {
     calculations.innerText = screen.innerText;
     firstNum = Number(screen.innerText);
+  } else {
+    let newOpSign;
+    if (value === 1) {
+      newOpSign = "+";
+    } else if (value === 2) {
+      newOpSign = "-";
+    } else if (value === 3) {
+      newOpSign = "*";
+    } else {
+      newOpSign = "/";
+    }
+    opSign = newOpSign;
+    calculations.innerText = replaceOp(calculations.innerText, opSign);
+    return;
   }
   screen.innerText = "";
   if (value === 1) {
     opSign = "+";
     calculations.innerText += " +";
+    ongoingOp = true;
   } else if (value === 2) {
     opSign = "-";
     calculations.innerText += " -";
+    ongoingOp = true;
   } else if (value === 3) {
     opSign = "*";
     calculations.innerText += " *";
-  } else {
+    ongoingOp = true;
+  } else if (value === 4) {
     opSign = "/";
     calculations.innerText += " /";
+    ongoingOp = true;
+  } else {
+    return;
   }
+}
+
+function replaceOp(str, sign) {
+  newStr = str.slice(0, str.length - 1);
+  newStr += sign;
+  return newStr;
 }
 
 function calculate() {
@@ -51,29 +81,42 @@ function calculate() {
     result = firstNum - secondNum;
   } else if (opSign === "*") {
     result = firstNum * secondNum;
-  } else {
+  } else if (opSign === "/") {
     result = firstNum / secondNum;
+  } else {
+    return;
   }
   calculations.innerText = result;
   operations.innerHTML += `<p class="operation">${firstNum}${opSign}${secondNum}=${result}`;
   firstNum = result;
+  secondNum = "";
+  ongoingOp = false;
 }
 
 function equal() {
-  calculate();
+  if (empty) {
+    return;
+  } else if (calculations.innerText === "") {
+    calculations.innerText = screen.innerText;
+  } else {
+    calculate();
+  }
   screen.innerText = calculations.innerText;
   calculations.innerText += " =";
   empty = true;
+  opSign = "";
+  ongoingOp = false;
 }
 
 function clear() {
-  console.log("working as expected");
   operations.innerHTML = "";
   screen.innerText = "";
   calculations.innerText = "";
-  empty = false;
-  firstNum = 0;
-  secondNum = 0;
+  empty = true;
+  firstNum = "";
+  secondNum = "";
+  opSign = "";
+  ongoingOp = false;
 }
 
 clearBtn.addEventListener("click", clear);
