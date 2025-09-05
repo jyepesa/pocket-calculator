@@ -23,43 +23,20 @@ function writeNum(num) {
 function operation(value) {
   if (empty) {
     return;
-  }
-  if (calculations.innerText !== "" && screen.innerText !== "") {
+  } else if (calculations.innerText !== "" && screen.innerText !== "") {
     calculate();
   } else if (!ongoingOp) {
     calculations.innerText = screen.innerText;
     firstNum = Number(screen.innerText);
   } else {
-    let newOpSign;
-    if (value === 1) {
-      newOpSign = "+";
-    } else if (value === 2) {
-      newOpSign = "-";
-    } else if (value === 3) {
-      newOpSign = "*";
-    } else {
-      newOpSign = "/";
-    }
-    opSign = newOpSign;
+    opSign = value;
     calculations.innerText = replaceOp(calculations.innerText, opSign);
     return;
   }
   screen.innerText = "";
-  if (value === 1) {
-    opSign = "+";
-    calculations.innerText += " +";
-    ongoingOp = true;
-  } else if (value === 2) {
-    opSign = "-";
-    calculations.innerText += " -";
-    ongoingOp = true;
-  } else if (value === 3) {
-    opSign = "*";
-    calculations.innerText += " *";
-    ongoingOp = true;
-  } else if (value === 4) {
-    opSign = "/";
-    calculations.innerText += " /";
+  if (value !== "") {
+    opSign = value;
+    calculations.innerText += ` ${value}`;
     ongoingOp = true;
   } else {
     return;
@@ -87,7 +64,9 @@ function calculate() {
     return;
   }
   calculations.innerText = result;
-  operations.innerHTML += `<p class="operation">${firstNum}${opSign}${secondNum}=${result}`;
+  operations.innerHTML =
+    `<p class="operation">${firstNum}${opSign}${secondNum}=${result}` +
+    operations.innerHTML;
   firstNum = result;
   secondNum = "";
   ongoingOp = false;

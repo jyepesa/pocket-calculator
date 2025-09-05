@@ -64,6 +64,7 @@ body {
 #operations {
   text-align: right;
   width: 30%;
+  padding: 1.5rem;
   overflow: scroll;
 }
 
